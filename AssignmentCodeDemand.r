@@ -1,6 +1,7 @@
 # Choose a test data type first !!
-testDataOn <- "monthly" # 'monthly' or "daily"
+testDataOn <- "daily" # 'monthly' or "daily"
 # Choose a test data type first !!
+
 
 # Steps:
 # !---------------------------------------------------!
@@ -13,6 +14,7 @@ library(ggplot2)
 library(forecast) # Load the forecast package
 library(lubridate) # For date manipulation
 library(tseries) # For the adf.test function
+library()
 
 # Load data from CSV file
 data <- read_csv("C:/Users/wbrya/OneDrive/Documents/australia_energy_complete_dataset.csv")
@@ -125,6 +127,11 @@ ggsubseriesplot(ts_data) +
 adf_result <- adf.test(ts_data, alternative = "stationary")
 print(adf_result)
 
+
+#kpss_result <- kpss.text(ts_data)
+#kpss_pval <- kpss_result$p.value
+#print(kpss_pval)
+
 # Extract the p-value
 p_value <- adf_result$p.value
 
@@ -154,6 +161,11 @@ ggPacf(acf_data)
 
 
 
+
+
+# !!!!!
+# Do AR and MA
+# 
 
 
 
@@ -191,6 +203,10 @@ stl_ets_forecast <- forecast(stl_ets_model, h = test_length)
 arima_model <- auto.arima(train_data)#, ic = "aicc") # based on the AICc criterion.
 arima_forecast <- forecast(arima_model, h = test_length)
 
+summary(arima_model)
+library(lmtest)
+coeftest(arima_model)
+
 # 3. Fit NNAR model (Neural Network Autoregression)
 nnar_model <- nnetar(train_data)
 nnar_forecast <- forecast(nnar_model, h = test_length)
@@ -204,7 +220,7 @@ holt_winters_model <- HoltWinters(train_data, seasonal = "additive")
 holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 
 if (testDataOn == "monthly") {
-  # 6. Fit ETS model if monthly
+# 6. Fit ETS model if monthly
   ets_model <- ets(train_data)
   ets_forecast <- forecast(ets_model, h = test_length)
 }
@@ -214,7 +230,7 @@ if (testDataOn == "monthly") {
 
 
 
-
+ 
 # !---------------------------------------------------!
 # ---------- 7. Forecast with forecast() -------------
 # !---------------------------------------------------!
@@ -239,6 +255,7 @@ autoplot(train_data) +
 # !---------------------------------------------------!
 # ---------- 8. Model Evaluation, RMSE, AICc, ACF Residual ----------
 # !---------------------------------------------------! 
+# Use summary(model instead)!!!!! 
 # Calculate MAPE for each model
 if (testDataOn == "monthly") {
   mape_ets <- mean(abs((test_data - ets_forecast$mean) / test_data)) * 100
@@ -273,9 +290,9 @@ residuals_hw <- residuals(holt_winters_model)
 acf(residuals_hw, lag.max = 12, na.action = na.pass)
 # Perform Ljung-Box test for autocorrelation
 Box.test(residuals_hw, lag = 12, type = "Ljung-Box")
-# P-Value > 0.05 suggest model has captured underlying patterns well.
-# Residuals do not exhibit significant autocorrelation.
-# Autocorrelation: how correlated t is related to t-1 
+  # P-Value > 0.05 suggest model has captured underlying patterns well.
+  # Residuals do not exhibit significant autocorrelation.
+  # Autocorrelation: how correlated t is related to t-1 
 
 
 
@@ -290,11 +307,11 @@ Box.test(residuals_hw, lag = 12, type = "Ljung-Box")
 # Plot the forecasts
 if (testDataOn == "monthly") {
   autoplot(train_data) +
-    autolayer(ets_forecast, series = "ETS") +
-    autolayer(stl_ets_forecast, series = "STL-ETS") +
+    #autolayer(ets_forecast, series = "ETS") +
+    #autolayer(stl_ets_forecast, series = "STL-ETS") +
     autolayer(arima_forecast, series = "ARIMA") +
-    autolayer(nnar_forecast, series = "NNAR") +
-    autolayer(tbats_forecast, series = "TBATS") +
+    #autolayer(nnar_forecast, series = "NNAR") +
+    #autolayer(tbats_forecast, series = "TBATS") +
     autolayer(holt_winters_forecast, series = "Holt-Winters") +
     autolayer(test_data, series = "Actual") +
     ggtitle(paste("Forecasts for", time_series_label, "Energy Demand")) +
