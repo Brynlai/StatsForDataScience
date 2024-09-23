@@ -149,7 +149,7 @@ if (p_value < alpha) {
   print("Reject the null hypothesis: The time series is likely stationary.")
 } else {
   print("Fail to reject the null hypothesis: The time series may have a unit root and is non-stationary.")
-} # for monthly, not statioanry
+} # for monthly, not stationary
 
 # KPSS test for additional confirmation
 kpss_result <- kpss.test(train_data)
@@ -161,7 +161,7 @@ if (kpss_result$p.value > alpha) {
   print("Before differencing: The time series is now likely stationary (KPSS Test).")
 } else {
   print("Before differencing: The time series may still have stationarity issues (KPSS Test).")
-} # for monthly, statioanry
+} # for monthly, stationary
 
 
 
