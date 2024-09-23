@@ -223,7 +223,12 @@ print(paste("Seasonal differences required:", D)) # 1
 
 # Non-seasonal: Below 12.
 p <- 1 # AR: Autoregressive. 1 non seasonal AR term, include lagged val of series in model.
-d <- 1 # Despite ADF and KPSS results, 1 to capture pattern more effectively.
+
+d <- 1 
+# Despite ADF and KPSS results, 1 to capture pattern more effectively.
+# When d = 1, shows smaller difference between train and test sets,
+
+
 q <- 0 # MA: Moving Average
 # Seasonal: Multiples of 12.
 P <- 0 # SAR
