@@ -279,9 +279,7 @@ arima_forecast <- forecast(arima_model, h = test_length)
 holt_winters_model <- HoltWinters(train_data, seasonal = "additive")
 holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 
-# 4. Fit ETS model
-ets_model <- ets(train_data)
-ets_forecast <- forecast(ets_model, h = test_length)
+
 
 
 
