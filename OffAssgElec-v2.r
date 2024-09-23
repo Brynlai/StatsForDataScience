@@ -223,7 +223,7 @@ print(paste("Seasonal differences required:", D)) # 1
 
 # Non-seasonal: Below 12.
 p <- 1 # AR: Autoregressive. 1 non seasonal AR term, include lagged val of series in model.
-d <- 0 # Differencing.
+d <- 1 # Despite ADF and KPSS results, 1 to capture pattern more effectively.
 q <- 0 # MA: Moving Average
 # Seasonal: Multiples of 12.
 P <- 0 # SAR
@@ -251,10 +251,10 @@ evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
 }
 evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 
-d <- 1
-manArimad1_model <- arima(train_data, order=c(p, d, q), seasonal=list(order=c(P, D, Q), period=freq))
-manualArimad1_forecast <- forecast(manArima_model, h=test_length)
-evaluate_arima_model(manArimad1_model, manualArimad1_forecast, test_data)
+#d <- 1
+#manArimad1_model <- arima(train_data, order=c(p, d, q), seasonal=list(order=c(P, D, Q), period=freq))
+#manualArimad1_forecast <- forecast(manArima_model, h=test_length)
+#evaluate_arima_model(manArimad1_model, manualArimad1_forecast, test_data)
 
 
 
