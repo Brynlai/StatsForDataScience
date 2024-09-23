@@ -211,6 +211,8 @@ train_data %>% diff() %>% ggtsdisplay(main="")
 ggAcf(train_data, lag.max = 36)
 ggPacf(train_data, lag.max = 36)
 
+# DK if need, Test if seasonal Pattern is stable
+ch.test(train_data)
 
 d <- ndiffs(train_data)
 print(paste("Number of differences required:", d)) # 0
@@ -367,5 +369,3 @@ autoplot(arima_forecast) +
   ylab("Demand") +
   guides(colour = guide_legend(title = "Legend"))
 
-# I forgot for what:
-ch.test(train_data)
