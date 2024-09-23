@@ -271,15 +271,19 @@ evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 sea_naive_model <- snaive(train_data)
 sea_naive_forecast <- forecast(sea_naive_model, h=test_length)
 
-# 2. Fit ARIMA model
+# 2. Fit ETS model using stlf for seasonal data
+stl_ets_model <- stlf(train_data)
+stl_ets_forecast <- forecast(stl_ets_model, h = test_length)
+
+# 3. Fit ARIMA model
 arima_model <- auto.arima(train_data, trace = TRUE, ic = "aicc") # based on the AICc criterion.
 arima_forecast <- forecast(arima_model, h = test_length)
 
-# 3. Fit Holt-Winters model
+# 4. Fit Holt-Winters model
 holt_winters_model <- HoltWinters(train_data, seasonal = "additive")
 holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 
-# 4. Fit ETS model
+# 5. Fit ETS model
 ets_model <- ets(train_data)
 ets_forecast <- forecast(ets_model, h = test_length)
 
@@ -296,6 +300,8 @@ ets_forecast <- forecast(ets_model, h = test_length)
 sea_naive_accuracy <- accuracy(sea_naive_forecast, test_data)
 print(sea_naive_accuracy)
 
+stl_ets_accuracy <- accuracy(stl_ets_forecast, test_data)
+print(stl_ets_accuracy)
 
 manArima_accuracy <- accuracy(manualArima_forecast, test_data)
 print(manArima_accuracy)
@@ -311,6 +317,13 @@ print(holtsWinter_accuracy)
 autoplot(sea_naive_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
   ggtitle("Seasonal Naive Forecast vs Actual Data") +
+  xlab("Time") +
+  ylab("Demand") 
+
+# STL ETS Plot
+autoplot(stl_ets_forecast) +
+  autolayer(test_data, series = "Actual Data", color = "red") +
+  ggtitle("STL ETS Forecast vs Actual Data") +
   xlab("Time") +
   ylab("Demand") 
 
@@ -360,4 +373,3 @@ autoplot(arima_forecast) +
   xlab("Time") +
   ylab("Demand") +
   guides(colour = guide_legend(title = "Legend"))
-
