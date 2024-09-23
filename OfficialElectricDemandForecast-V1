@@ -14,6 +14,15 @@ library(uroot)
 # Load data from CSV file
 data <- read_csv("C:/Users/wbrya/OneDrive/Documents/australia_energy_complete_dataset.csv")
 
+# Check for missing values in the entire data frame
+print("Total missing values in the data frame:")
+print(sum(is.na(data)))
+
+# Check for missing values by column
+print("Missing values by column:")
+print(colSums(is.na(data)))
+# Missing values in columns rainfall and solar_exposure, we will not be using these anyways.
+
 # Drop columns containing "rrp"
 noRrp <- data %>%
   select(-contains("rrp"))
@@ -77,8 +86,6 @@ ggplot(monthly_df, aes(x = month, y = demand)) +
 # !---------------------------------------------------!
 ts_data <- ts(monthly_df$demand, start = c(year(min(monthly_df$month)), month(min(monthly_df$month))), frequency = 12)
 frequency <- 12
-time_series_label <- "Monthly"
-
 
 # Decompose the time series
 components_dfts <- decompose(ts_data)
@@ -166,10 +173,9 @@ if (kpss_result$p.value > alpha) {
 # ---------- 5. Correlogram and Pacf -----------------
 # !---------------------------------------------------!
 # Autocorrelation: measures the linear relationship between a time series and its lagged versions.
-acf_data <- window(train_data, start=2015, end=2019)
 
-ggAcf(train_data, lag.max = 36)
-ggPacf(train_data, lag.max = 36)
+ggAcf(train_data, lag.max = 24)
+ggPacf(train_data, lag.max = 24)
 
 # Perform the ADF test
 adf_result <- adf.test(train_data, alternative = "stationary")
@@ -200,14 +206,18 @@ train_data %>% diff() %>% ggtsdisplay(main="")
 # ---------- 6. Manual Arima Fitting -----------------
 # !---------------------------------------------------!
 # Plot ACF and PACF to visually check stationarity
-acf(train_data, main = "ACF of Training Data")
-# ggAcf(acf_data)
-pacf(train_data, main = "PACF of Training Data")
+#acf(train_data, main = "ACF of Training Data")
+#pacf(train_data, main = "PACF of Training Data")
+ggAcf(train_data, lag.max = 36)
+ggPacf(train_data, lag.max = 36)
+
 
 d <- ndiffs(train_data)
 print(paste("Number of differences required:", d)) # 0
 D <- nsdiffs(train_data) # For seasonal data
 print(paste("Seasonal differences required:", D)) # 1
+
+# Based on ...
 
 # Non-seasonal: Below 12.
 p <- 1 # AR: Autoregressive. 1 non seasonal AR term, include lagged val of series in model.
@@ -221,13 +231,28 @@ freq <- 12
 manArima_model <- arima(train_data, order=c(p, d, q), seasonal=list(order=c(P, D, Q), period=freq))
 manualArima_forecast <- forecast(manArima_model, h=test_length)
 
-plot(manualArima_forecast)
-lines(test_data, col="red")
-accuracy(manualArima_forecast, test_data)
-checkresiduals(manArima_model, plot = TRUE)
 
+evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
+  plot(manualArima_forecast)
+  lines(test_data, col="red")
+  accuracy(manualArima_forecast, test_data)
+  checkresiduals(manArima_model, plot = TRUE)
+  #AIC(manArima_model)
+  
+  npar <- length(manArima_model$coef) + 1
+  nstar <- length(manArima_model$residuals) - manArima_model$arma[6] - manArima_model$arma[7] * manArima_model$arma[5]
+  
+  bic <- manArima_model$aic + npar * (log(nstar) - 2)
+  aicc <- manArima_model$aic + 2 * npar * (nstar/(nstar - npar - 1) - 1)
+  print("AICc value:")
+  print(aicc)
+}
+evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 
-
+d <- 1
+manArimad1_model <- arima(train_data, order=c(p, d, q), seasonal=list(order=c(P, D, Q), period=freq))
+manualArimad1_forecast <- forecast(manArima_model, h=test_length)
+evaluate_arima_model(manArimad1_model, manualArimad1_forecast, test_data)
 
 
 
@@ -247,11 +272,11 @@ stl_ets_forecast <- forecast(stl_ets_model, h = test_length)
 arima_model <- auto.arima(train_data, trace = TRUE, ic = "aicc") # based on the AICc criterion.
 arima_forecast <- forecast(arima_model, h = test_length)
 
-# 5. Fit Holt-Winters model
+# 4. Fit Holt-Winters model
 holt_winters_model <- HoltWinters(train_data, seasonal = "additive")
 holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 
-# 6. Fit ETS model
+# 5. Fit ETS model
 ets_model <- ets(train_data)
 ets_forecast <- forecast(ets_model, h = test_length)
 
