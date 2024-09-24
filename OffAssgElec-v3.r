@@ -131,11 +131,8 @@ nIntoFutures <- test_length
 # !----------# ADF and KPSS Only for non seasonal
 # Perform the ADF test
 adf_result <- adf.test(train_data, alternative = "stationary")
-print(adf_result)
-
 # Extract the p-value
 p_value <- adf_result$p.value
-
 # Choose your significance level (alpha)
 alpha <- 0.05
 
@@ -145,6 +142,9 @@ if (p_value < alpha) {
 } else {
   print("Fail to reject the null hypothesis: The time series may have a unit root and is non-stationary.")
 } # for monthly, not stationary
+print(adf_result)
+
+
 
 
 
