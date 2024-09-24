@@ -242,10 +242,12 @@ holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 sea_naive_accuracy <- accuracy(sea_naive_forecast, test_data)
 print(sea_naive_accuracy)
 
+print("ARIMA(0,0,1)(0,1,1)[12]:")
 #summary(manualArima_forecast)
 manArima_accuracy <- accuracy(manualArima_forecast, test_data)
 print(manArima_accuracy) # Train RMSE 18.3% Higher
 
+print("ARIMA(1,1,0)(0,1,1)[12]:")
 #summary(manualArimaW_forecast)
 manArimaW_accuracy <- accuracy(manualArimaW_forecast, test_data)
 print(manArimaW_accuracy) # Train RMSE 3% Higher
