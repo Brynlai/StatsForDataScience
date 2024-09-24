@@ -194,8 +194,9 @@ if (p_value < alpha) {
   print("Fail to reject the null hypothesis: The time series may have a unit root and is non-stationary.")
 } # for monthly, not statioanry
 
-train_data %>% diff() %>% ggtsdisplay(main="")
+#train_data %>% diff() %>% ggtsdisplay(main="")
 
+train_data %>% ggtsdisplay(main="")
 
 
 
@@ -208,8 +209,9 @@ train_data %>% diff() %>% ggtsdisplay(main="")
 # Plot ACF and PACF to visually check stationarity
 #acf(train_data, main = "ACF of Training Data")
 #pacf(train_data, main = "PACF of Training Data")
-ggAcf(train_data, lag.max = 36)
-ggPacf(train_data, lag.max = 36)
+#ggAcf(train_data, lag.max = 36)
+#ggPacf(train_data, lag.max = 36)
+train_data %>% ggtsdisplay(main="")
 
 # DK if need, Test if seasonal Pattern is stable
 ch.test(train_data)
