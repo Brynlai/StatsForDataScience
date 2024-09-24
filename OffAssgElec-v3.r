@@ -174,8 +174,10 @@ if (kpss_result$p.value > alpha) {
 # !---------------------------------------------------!
 # Autocorrelation: measures the linear relationship between a time series and its lagged versions.
 
-ggAcf(train_data, lag.max = 24)
-ggPacf(train_data, lag.max = 24)
+#ggAcf(train_data, lag.max = 24)
+#ggPacf(train_data, lag.max = 24)
+train_data %>% ggtsdisplay(main="")
+
 
 # Perform the ADF test
 adf_result <- adf.test(train_data, alternative = "stationary")
@@ -222,10 +224,14 @@ D <- nsdiffs(train_data) # For seasonal data
 print(paste("Seasonal differences required:", D)) # 1
 
 # Based on ...
+# For Loop: ARIMA(0,1,1)(0,1,1)[12] - AICc = 965.8 RMSE=50% diff (Backup with formula)
+# William: 	    ARIMA(1,1,0)(0,1,1)[12] - AICc = 969  RMSE=3% diff (Formula for this first)
+# Based on ACF and PACF ARIMA(0,0,1)(0,1,1)[12]
+
 
 # Non-seasonal: Below 12.
 p <- 1 
-d <- 1 
+d <- 1 # should be 0
 # Despite ADF and KPSS results showing d should be 0, d=1  capture pattern more effectively.
 # When d = 1, shows smaller difference between train and test sets,
 
@@ -255,6 +261,7 @@ evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
   
   print("Residuals: ")
   checkresiduals(manArima_model, plot = TRUE)
+  summary(manArima_model)
 }
 evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 
@@ -293,7 +300,6 @@ holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 # Print Values
 sea_naive_accuracy <- accuracy(sea_naive_forecast, test_data)
 print(sea_naive_accuracy)
-
 
 manArima_accuracy <- accuracy(manualArima_forecast, test_data)
 print(manArima_accuracy)
