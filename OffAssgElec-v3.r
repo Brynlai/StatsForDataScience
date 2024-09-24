@@ -208,49 +208,11 @@ train_data %>% ggtsdisplay(main="")
 # !---------------------------------------------------!
 # ---------- 6. Manual Arima Fitting -----------------
 # !---------------------------------------------------!
-# Plot ACF and PACF to visually check stationarity
-#acf(train_data, main = "ACF of Training Data")
-#pacf(train_data, main = "PACF of Training Data")
-#ggAcf(train_data, lag.max = 36)
-#ggPacf(train_data, lag.max = 36)
-train_data %>% ggtsdisplay(main="")
-
-# DK if need, Test if seasonal Pattern is stable
-ch.test(train_data)
-
-d <- ndiffs(train_data)
-print(paste("Number of differences required:", d)) # 0
-D <- nsdiffs(train_data) # For seasonal data
-print(paste("Seasonal differences required:", D)) # 1
-
-# Based on ...
-# For Loop: ARIMA(0,1,1)(0,1,1)[12] - AICc = 965.8 RMSE=50% diff (Backup with formula)
-# William: 	    ARIMA(1,1,0)(0,1,1)[12] - AICc = 969  RMSE=3% diff (Formula for this first)
-# Based on ACF and PACF ARIMA(0,0,1)(0,1,1)[12]
-
-
-# Non-seasonal: Below 12.
-p <- 1 
-d <- 1 # should be 0
-# Despite ADF and KPSS results showing d should be 0, d=1  capture pattern more effectively.
-# When d = 1, shows smaller difference between train and test sets,
-
-
-q <- 0 # MA: Moving Average
-# Seasonal: Multiples of 12.
-P <- 0 # SAR
-D <- 1 # Clearly seasonal data. Seasonal Differencing. Apply 1 season differencing so stationary. Removes seasonality.
-Q <- 1 # SMA. include lagged forecast errors from seasonal component in the model.
-freq <- 12
-manArima_model <- arima(train_data, order=c(p, d, q), seasonal=list(order=c(P, D, Q), period=freq))
-manualArima_forecast <- forecast(manArima_model, h=test_length)
-
-
 evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
   plot(manualArima_forecast)
   lines(test_data, col="red")
   accuracy(manualArima_forecast, test_data)
-
+  
   # Calculate AIC and BIC
   n <- length(manArima_model$residuals)
   k <- length(manArima_model$coef)
@@ -263,10 +225,29 @@ evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
   checkresiduals(manArima_model, plot = TRUE)
   summary(manArima_model)
 }
+# Plot ACF and PACF to visually check stationarity
+train_data %>% ggtsdisplay(main="")
+
+# DK if need, Test if seasonal Pattern is stable
+ch.test(train_data)
+
+d <- ndiffs(train_data)
+print(paste("Number of differences required:", d)) # 0
+D <- nsdiffs(train_data) # For seasonal data
+print(paste("Seasonal differences required:", D)) # 1
+
+# Based on ACF and PACF ARIMA(0,0,1)(0,1,1)[12]
+# Non-seasonal: Look Below 12 lags: p,d,q
+# Seasonal: Multiples of 12 lag. : P,D,Q
+manArima_model <- arima(train_data, order=c(0, 0, 1), seasonal=list(order=c(0, 1, 1), period=12))
+manualArima_forecast <- forecast(manArima_model, h=test_length)
 evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 
-
-
+# Based on ...
+# William: 	    ARIMA(1,1,0)(0,1,1)[12] - AICc = 969  RMSE=3% diff (Formula for this first)
+manArimaW_model <- arima(train_data, order=c(1, 1, 0), seasonal=list(order=c(0, 1, 1), period=12))
+manualArimaW_forecast <- forecast(manArimaW_model, h=test_length)
+evaluate_arima_model(manArimaW_model, manualArimaW_forecast, test_data)
 
 
 
