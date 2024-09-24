@@ -156,32 +156,8 @@ if (p_value < alpha) {
 # ---------- 5. Correlogram and Pacf -----------------
 # !---------------------------------------------------!
 # Autocorrelation: measures the linear relationship between a time series and its lagged versions.
-
-#ggAcf(train_data, lag.max = 24)
-#ggPacf(train_data, lag.max = 24)
 train_data %>% ggtsdisplay(main="")
 
-
-# Perform the ADF test
-adf_result <- adf.test(train_data, alternative = "stationary")
-print(adf_result)
-
-# Extract the p-value
-p_value <- adf_result$p.value
-
-# Choose your significance level (alpha)
-alpha <- 0.05
-
-# Compare the p-value to the chosen significance level
-if (p_value < alpha) {
-  print("Reject the null hypothesis: The time series is likely stationary.")
-} else {
-  print("Fail to reject the null hypothesis: The time series may have a unit root and is non-stationary.")
-} # for monthly, not statioanry
-
-#train_data %>% diff() %>% ggtsdisplay(main="")
-
-train_data %>% ggtsdisplay(main="")
 
 
 
@@ -235,6 +211,9 @@ evaluate_arima_model(manArimaW_model, manualArimaW_forecast, test_data)
 
 
 
+
+
+
 # !---------------------------------------------------!
 # ---------- 7. Other Model fit ----------------------
 # !---------------------------------------------------!
@@ -249,8 +228,6 @@ arima_forecast <- forecast(arima_model, h = test_length)
 # 3. Fit Holt-Winters model
 holt_winters_model <- HoltWinters(train_data, seasonal = "additive")
 holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
-
-
 
 
 
