@@ -10,6 +10,8 @@ library(forecast) # Load the forecast package
 library(lubridate) # For date manipulation
 library(tseries) # For the adf.test function
 library(uroot)
+library(lmtest)
+
 
 # Load data from CSV file
 data <- read_csv("C:/Users/wbrya/OneDrive/Documents/australia_energy_complete_dataset.csv")
@@ -309,11 +311,12 @@ autoplot(holt_winters_forecast) +
 print(manArimaW_accuracy)
 summary(manArimaW_model)
 # Extract residuals from the chosen model (e.g., arima_model)
-residuals_arima <- residuals(manArimaW_model)
+#residuals_arima <- residuals(manArimaW_model)
 # Plot ACF of residuals
-acf(residuals_arima, main = "ACF of Residuals")
-Box.test(residuals(manArimaW_model), lag = 12, type = "Ljung-Box")
+#acf(residuals_arima, main = "ACF of Residuals")
+#Box.test(residuals(manArimaW_model), lag = 8, type = "Ljung-Box")
 checkresiduals(manArimaW_model, plot = TRUE)
+coeftest(manArimaW_model)
 # Plot
 autoplot(manualArimaW_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
