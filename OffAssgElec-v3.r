@@ -122,8 +122,8 @@ ggsubseriesplot(ts_data) +
 train_data <- window(ts_data,start=2015,end=c(2019)) # if use monthly mape is 1.6
 test_data <- window(ts_data, start = 2019)
 test_length <- length(test_data)
-print(test_length) # Monthly:20, Daily: 646
-nIntoFutures <- 12
+print(test_length) 
+nIntoFutures <- test_length
 
 
 
@@ -224,10 +224,9 @@ print(paste("Seasonal differences required:", D)) # 1
 # Based on ...
 
 # Non-seasonal: Below 12.
-p <- 1 # AR: Autoregressive. 1 non seasonal AR term, include lagged val of series in model.
-
+p <- 1 
 d <- 1 
-# Despite ADF and KPSS results, 1 to capture pattern more effectively.
+# Despite ADF and KPSS results showing d should be 0, d=1  capture pattern more effectively.
 # When d = 1, shows smaller difference between train and test sets,
 
 
