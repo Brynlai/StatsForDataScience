@@ -243,7 +243,7 @@ manArima_model <- arima(train_data, order=c(0, 0, 1), seasonal=list(order=c(0, 1
 manualArima_forecast <- forecast(manArima_model, h=test_length)
 evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 
-# Based on ...
+# Based on trial and error.
 # William: 	    ARIMA(1,1,0)(0,1,1)[12] - AICc = 969  RMSE=3% diff (Formula for this first)
 manArimaW_model <- arima(train_data, order=c(1, 1, 0), seasonal=list(order=c(0, 1, 1), period=12))
 manualArimaW_forecast <- forecast(manArimaW_model, h=test_length)
@@ -282,9 +282,13 @@ holt_winters_forecast <- forecast(holt_winters_model, h = test_length)
 sea_naive_accuracy <- accuracy(sea_naive_forecast, test_data)
 print(sea_naive_accuracy)
 
+#summary(manualArima_forecast)
 manArima_accuracy <- accuracy(manualArima_forecast, test_data)
-print(manArima_accuracy)
-summary(manualArima_forecast)
+print(manArima_accuracy) # Train RMSE 18.3% Higher
+
+#summary(manualArimaW_forecast)
+manArimaW_accuracy <- accuracy(manualArimaW_forecast, test_data)
+print(manArimaW_accuracy) # Train RMSE 3% Higher
 
 arima_accuracy <- accuracy(arima_forecast, test_data)
 print(arima_accuracy)
@@ -302,7 +306,14 @@ autoplot(sea_naive_forecast) +
 # Manual ARIMA Plot
 autoplot(manualArima_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
-  ggtitle("Manual ARIMA D=1 Forecast vs Actual Data") +
+  ggtitle("ARIMA(0,0,1)(0,1,1)[12] Forecast vs Actual Data") +
+  xlab("Time") +
+  ylab("Demand") 
+
+# Manual ARIMA W Plot
+autoplot(manualArimaW_forecast) +
+  autolayer(test_data, series = "Actual Data", color = "red") +
+  ggtitle("ARIMA(1,1,0)(0,1,1)[12] Forecast vs Actual Data") +
   xlab("Time") +
   ylab("Demand") 
 
