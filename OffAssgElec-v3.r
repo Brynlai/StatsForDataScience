@@ -301,6 +301,9 @@ autoplot(holt_winters_forecast) +
 # ---------- 9. Best model summary-- -----------------
 # !---------------------------------------------------! 
 # !!! 1. Best Model: ARIMA(1,1,0)(0,1,1)[12]
+# more robust and realistic approach for time series forecasting. 
+# This method better reflects the uncertainty and changing dynamics of the time series, 
+# making it a preferred choice for many real-world applications. 
 print(manArimaW_accuracy)
 summary(manArimaW_model)
 # Extract residuals from the chosen model (e.g., arima_model)
