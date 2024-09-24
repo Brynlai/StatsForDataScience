@@ -98,11 +98,6 @@ ggseasonplot(ts_data, year.labels = TRUE, year.labels.left = TRUE) +
   ylab("Energy Demand") +
   ggtitle("Seasonal plot: Australia Energy Demand by Month")
 
-# Plot the Polar seasonal plot using ggseasonplot
-ggseasonplot(ts_data, polar = TRUE) +
-  ylab("Energy Demand") +
-  ggtitle("Polar seasonal plot: Australia Energy Demand by Month")
-
 # Plot the seasonal subseries plot using ggsubseriesplot
 ggsubseriesplot(ts_data) +
   ylab("Energy Demand") +
