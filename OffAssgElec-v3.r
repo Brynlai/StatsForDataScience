@@ -243,23 +243,22 @@ evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
   plot(manualArima_forecast)
   lines(test_data, col="red")
   accuracy(manualArima_forecast, test_data)
-  checkresiduals(manArima_model, plot = TRUE)
-  #AIC(manArima_model)
+
+  # Calculate AIC and BIC
+  n <- length(manArima_model$residuals)
+  k <- length(manArima_model$coef)
   
-  npar <- length(manArima_model$coef) + 1
-  nstar <- length(manArima_model$residuals) - manArima_model$arma[6] - manArima_model$arma[7] * manArima_model$arma[5]
-  
-  bic <- manArima_model$aic + npar * (log(nstar) - 2)
-  aicc <- manArima_model$aic + 2 * npar * (nstar/(nstar - npar - 1) - 1)
+  aicc <- manArima_model$aic + 2 * k * (n / (n - k - 1) - 1)
   print("AICc value:")
   print(aicc)
+  
+  print("Residuals: ")
+  checkresiduals(manArima_model, plot = TRUE)
 }
 evaluate_arima_model(manArima_model, manArima_forecast, test_data)
 
-#d <- 1
-#manArimad1_model <- arima(train_data, order=c(p, d, q), seasonal=list(order=c(P, D, Q), period=freq))
-#manualArimad1_forecast <- forecast(manArima_model, h=test_length)
-#evaluate_arima_model(manArimad1_model, manualArimad1_forecast, test_data)
+
+
 
 
 
