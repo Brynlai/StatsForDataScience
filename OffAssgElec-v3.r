@@ -43,7 +43,7 @@ monthly_df <- data %>%
   group_by(month) %>%
   summarise(demand = sum(demand)) # SUM or MEAN
 
-# Exclude the last month if necessary
+# Exclude the last month because incomplete
 monthly_df <- monthly_df %>% 
   filter(month < max(month) - months(1))
 
@@ -300,19 +300,19 @@ autoplot(holt_winters_forecast) +
 # !---------------------------------------------------!
 # ---------- 9. Best model summary-- -----------------
 # !---------------------------------------------------! 
-# !!! 1. Best Model: ARIMA(1,0,0)(0,1,1)[12] with drift
-print(arima_accuracy)
-summary(arima_model)
+# !!! 1. Best Model: ARIMA(1,1,0)(0,1,1)[12]
+print(manArimaW_accuracy)
+summary(manArimaW_model)
 # Extract residuals from the chosen model (e.g., arima_model)
-residuals_arima <- residuals(arima_model)
+residuals_arima <- residuals(manArimaW_model)
 # Plot ACF of residuals
 acf(residuals_arima, main = "ACF of Residuals")
-Box.test(residuals(arima_model), lag = 12, type = "Ljung-Box")
-checkresiduals(arima_model, plot = TRUE)
+Box.test(residuals(manArimaW_model), lag = 12, type = "Ljung-Box")
+checkresiduals(manArimaW_model, plot = TRUE)
 # Plot
-autoplot(arima_forecast) +
+autoplot(manualArimaW_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
-  ggtitle("ARIMA Forecast vs Actual Data") +
+  ggtitle("ARIMA(1,1,0)(0,1,1)[12] Forecast vs Actual Data") +
   xlab("Time") +
   ylab("Demand") +
   guides(colour = guide_legend(title = "Legend"))
