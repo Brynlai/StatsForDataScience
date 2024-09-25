@@ -299,7 +299,7 @@ autoplot(holt_winters_forecast) +
 # !!! 1. Best Model: ARIMA(1,1,0)(0,1,1)[12]
 summary(manArimaW_model)
 checkresiduals(manArimaW_model, plot = TRUE)
-coeftest(manArimaW_model)
+print(manArimaW_accuracy) 
 # Plot
 autoplot(manualArimaW_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
