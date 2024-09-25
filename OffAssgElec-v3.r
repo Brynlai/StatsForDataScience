@@ -172,7 +172,7 @@ adfTest(seasonal_diff) # Test non-seasonal
 seasonal_non_diff <- diff(seasonal_diff, lag=1)
 seasonal_non_diff %>% ggtsdisplay(main="")
 adfTest(seasonal_non_diff) # Test non-seasonal
-
+  
 
 
 
@@ -322,17 +322,17 @@ autoplot(holt_winters_forecast) +
 # more robust and realistic approach for time series forecasting. 
 # This method better reflects the uncertainty and changing dynamics of the time series, 
 # making it a preferred choice for many real-world applications. 
-print(manArima_model)
-summary(manArima_model)
+print(manArimaW_model)
+summary(manArimaW_model)
 # Extract residuals from the chosen model (e.g., arima_model)
 #residuals_arima <- residuals(manArimaW_model)
 # Plot ACF of residuals
 #acf(residuals_arima, main = "ACF of Residuals")
 #Box.test(residuals(manArimaW_model), lag = 8, type = "Ljung-Box")
-checkresiduals(manArima_model, plot = TRUE)
-coeftest(manArima_model)
+checkresiduals(manArimaW_model, plot = TRUE)
+coeftest(manArimaW_model)
 # Plot
-autoplot(manualArima_forecast) +
+autoplot(manualArimaW_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
   ggtitle("ARIMA(1,1,0)(0,1,1)[12] Forecast vs Actual Data") +
   xlab("Time") +
