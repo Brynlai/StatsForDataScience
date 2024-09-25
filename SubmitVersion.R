@@ -187,12 +187,6 @@ evaluate_arima_model <- function(manArima_model, manArima_forecast, test_data) {
   checkresiduals(manArima_model, plot = TRUE)
   summary(manArima_model)
 }
-# Plot ACF and PACF to visually check stationarity
-train_data %>% ggtsdisplay(main="")
-
-# Test if seasonal Pattern is stable
-ch.test(train_data)
-
 # Based on ACF and PACF ARIMA(p,1,q)(0,1,0)[12]
 # Non-seasonal: Look Below 12 lags: p,d,q
 # Seasonal: Multiples of 12 lag. : P,D,Q
