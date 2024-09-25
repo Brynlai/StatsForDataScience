@@ -131,20 +131,23 @@ nIntoFutures <- test_length
 # !---------------------------------------------------!
 # ---------- 4. Stationary test: ADF test ------------
 # !----------# ADF and KPSS Only for non seasonal
-# Perform the ADF test
-adf_result <- adf.test(train_data, alternative = "stationary")
-# Extract the p-value
-p_value <- adf_result$p.value
-# Choose your significance level (alpha)
-alpha <- 0.05
-
-# Compare the p-value to the chosen significance level
-if (p_value < alpha) {
-  print("Reject the null hypothesis: The time series is likely stationary.")
-} else {
-  print("Fail to reject the null hypothesis: The time series may have a unit root and is non-stationary.")
-} # for monthly, not stationary
-print(adf_result)
+adfTest <- function(dataSet){
+  # Perform the ADF test
+  adf_result <- adf.test(dataSet, alternative = "stationary")
+  # Extract the p-value
+  p_value <- adf_result$p.value
+  # Choose your significance level (alpha)
+  alpha <- 0.05
+  
+  # Compare the p-value to the chosen significance level
+  if (p_value < alpha) {
+    print("Reject the null hypothesis: The time series is likely stationary.")
+  } else {
+    print("Fail to reject the null hypothesis: The time series may have a unit root and is non-stationary.")
+  } # for monthly, not stationary
+  print(adf_result)
+}
+adfTest(train_data)
 
 
 
@@ -160,6 +163,15 @@ print(adf_result)
 # Autocorrelation: measures the linear relationship between a time series and its lagged versions.
 train_data %>% ggtsdisplay(main="")
 
+# Seasonal differencing with a lag of 12
+seasonal_diff <- diff(train_data, lag=12)
+seasonal_diff %>% ggtsdisplay(main="")
+adfTest(seasonal_diff) # Test non-seasonal
+
+# Non-seasonal differencing with a lag of 1
+seasonal_non_diff <- diff(seasonal_diff, lag=1)
+seasonal_non_diff %>% ggtsdisplay(main="")
+adfTest(seasonal_non_diff) # Test non-seasonal
 
 
 
