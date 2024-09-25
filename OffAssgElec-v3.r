@@ -209,12 +209,14 @@ print(paste("Number of differences required:", d)) # 0
 D <- nsdiffs(train_data) # For seasonal data
 print(paste("Seasonal differences required:", D)) # 1
 
-# Based on ACF and PACF ARIMA(0,0,1)(0,1,1)[12]
+# Based on ACF and PACF ARIMA(p,1,q)(0,1,0)[12]
 # Non-seasonal: Look Below 12 lags: p,d,q
 # Seasonal: Multiples of 12 lag. : P,D,Q
-manArima_model <- arima(train_data, order=c(0, 0, 1), seasonal=list(order=c(0, 1, 1), period=12))
+manArima_model <- arima(train_data, order=c(1, 1, 1), seasonal=list(order=c(0, 1, 0), period=12))
 manualArima_forecast <- forecast(manArima_model, h=test_length)
 evaluate_arima_model(manArima_model, manArima_forecast, test_data)
+manArima_accuracy <- accuracy(manualArima_forecast, test_data)
+print(manArima_accuracy)
 
 # Based on trial and error.
 # William: 	    ARIMA(1,1,0)(0,1,1)[12] - AICc = 969  RMSE=3% diff (Formula for this first)
@@ -316,21 +318,21 @@ autoplot(holt_winters_forecast) +
 # !---------------------------------------------------!
 # ---------- 9. Best model summary-- -----------------
 # !---------------------------------------------------! 
-# !!! 1. Best Model: ARIMA(1,1,0)(0,1,1)[12]
+# !!! 1. Best Model: ARIMA(1,1,1)(0,1,0)[12]
 # more robust and realistic approach for time series forecasting. 
 # This method better reflects the uncertainty and changing dynamics of the time series, 
 # making it a preferred choice for many real-world applications. 
-print(manArimaW_accuracy)
-summary(manArimaW_model)
+print(manArima_model)
+summary(manArima_model)
 # Extract residuals from the chosen model (e.g., arima_model)
 #residuals_arima <- residuals(manArimaW_model)
 # Plot ACF of residuals
 #acf(residuals_arima, main = "ACF of Residuals")
 #Box.test(residuals(manArimaW_model), lag = 8, type = "Ljung-Box")
-checkresiduals(manArimaW_model, plot = TRUE)
-coeftest(manArimaW_model)
+checkresiduals(manArima_model, plot = TRUE)
+coeftest(manArima_model)
 # Plot
-autoplot(manualArimaW_forecast) +
+autoplot(manualArima_forecast) +
   autolayer(test_data, series = "Actual Data", color = "red") +
   ggtitle("ARIMA(1,1,0)(0,1,1)[12] Forecast vs Actual Data") +
   xlab("Time") +
